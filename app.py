@@ -207,8 +207,8 @@ def mostrar_cotacoes():
             <tr>
                 <th>Sucursal</th>
                 <th>Data</th>
-                <th>Dólar (Venda)</th>
-                <th>Guarani (Compra)</th>
+                <th>Dólar </th>
+                <th>Guarani </th>
             </tr>
     """
 
@@ -254,3 +254,4 @@ def mostrar_cotacoes():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
