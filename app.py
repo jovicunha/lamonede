@@ -83,6 +83,7 @@ def mostrar_cotacoes():
     <head>
         <title>🤘Nosso PY🤘</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
         <style>
             body {{
                 font-family: 'Segoe UI', sans-serif;
@@ -91,12 +92,10 @@ def mostrar_cotacoes():
                 padding: 20px;
                 margin: 0;
             }}
-
             h1 {{
                 text-align: center;
                 margin-bottom: 30px;
             }}
-
             table {{
                 width: 90%;
                 margin: auto;
@@ -105,36 +104,29 @@ def mostrar_cotacoes():
                 border-radius: 10px;
                 overflow: hidden;
             }}
-
             th, td {{
                 padding: 14px;
                 text-align: center;
             }}
-
             th {{
                 background: #1a1a1a;
                 color: #9a9a9a;
             }}
-
             td {{
                 border-bottom: 1px solid #1f1f1f;
             }}
-
             tr:hover {{
                 background-color: #181818;
             }}
-
             .melhor {{
                 background-color: #1b2b1b !important;
                 color: #9be79b;
                 font-weight: bold;
             }}
-
             form {{
                 text-align: center;
                 margin: 30px;
             }}
-
             input[type=number] {{
                 padding: 12px;
                 width: 220px;
@@ -144,7 +136,6 @@ def mostrar_cotacoes():
                 background: #1a1a1a;
                 color: #fff;
             }}
-
             input[type=submit] {{
                 padding: 12px 22px;
                 border-radius: 6px;
@@ -153,18 +144,15 @@ def mostrar_cotacoes():
                 color: #9be79b;
                 cursor: pointer;
             }}
-
             .resultado {{
                 margin-top: 20px;
                 text-align: center;
                 font-size: 18px;
                 color: #9be79b;
             }}
-
             .resultado.calculadora {{
                 color: #ff6666;
             }}
-
             footer {{
                 text-align: center;
                 margin-top: 20px;
@@ -228,7 +216,7 @@ def mostrar_cotacoes():
 
     texto += "</table>"
 
-    # -------- DASHBOARD AGORA ABAIXO DA TABELA --------
+    # -------- DASHBOARD --------
     if melhor_dolar and melhor_guarani:
         texto += "<div class='resultado'>"
 
@@ -243,6 +231,44 @@ def mostrar_cotacoes():
 
         texto += "</div>"
 
+    # -------- PRIMEIRO VÍDEO AO VIVO --------
+    texto += """
+    <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
+        <h2>📹 Paraguai ➡️ Foz do Iguaçu</h2>
+        <video id="video1" controls autoplay muted style="width:100%;max-width:900px;border-radius:10px;"></video>
+    </div>
+    <script>
+        var video1 = document.getElementById('video1');
+        var videoSrc1 = "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8";
+        if (Hls.isSupported()) {
+            var hls1 = new Hls();
+            hls1.loadSource(videoSrc1);
+            hls1.attachMedia(video1);
+        } else if (video1.canPlayType('application/vnd.apple.mpegurl')) {
+            video1.src = videoSrc1;
+        }
+    </script>
+    """
+
+    # -------- SEGUNDO VÍDEO AO VIVO --------
+    texto += """
+    <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
+        <h2>📹Foz do Iguaçu➡️ Paraguai </h2>
+        <video id="video2" controls autoplay muted style="width:100%;max-width:900px;border-radius:10px;"></video>
+    </div>
+    <script>
+        var video2 = document.getElementById('video2');
+        var videoSrc2 = "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8";
+        if (Hls.isSupported()) {
+            var hls2 = new Hls();
+            hls2.loadSource(videoSrc2);
+            hls2.attachMedia(video2);
+        } else if (video2.canPlayType('application/vnd.apple.mpegurl')) {
+            video2.src = videoSrc2;
+        }
+    </script>
+    """
+
     texto += """
         <footer>Atualizado automaticamente • BY JOVICUNHA</footer>
     </body>
@@ -255,5 +281,3 @@ def mostrar_cotacoes():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-
-
