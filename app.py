@@ -61,20 +61,16 @@ def mostrar_cotacoes():
     melhor_dolar = min(dolar_validos, key=lambda x: x['dolar_real_venta']) if dolar_validos else None
     melhor_guarani = max(real_validos, key=lambda x: x['real_guarani_compra']) if real_validos else None
 
-    # ---------------- CALCULADORA ----------------
     valor = request.form.get("valor")
     resultado_dolar = resultado_guarani = None
 
     if valor:
         try:
             valor_num = float(valor.replace(",", "."))
-
             if melhor_dolar:
                 resultado_dolar = valor_num / melhor_dolar['dolar_real_venta']
-
             if melhor_guarani:
                 resultado_guarani = valor_num * melhor_guarani['real_guarani_compra']
-
         except ValueError:
             valor = None
 
@@ -92,10 +88,7 @@ def mostrar_cotacoes():
                 padding: 20px;
                 margin: 0;
             }}
-            h1 {{
-                text-align: center;
-                margin-bottom: 30px;
-            }}
+            h1 {{ text-align: center; margin-bottom: 30px; }}
             table {{
                 width: 90%;
                 margin: auto;
@@ -104,29 +97,12 @@ def mostrar_cotacoes():
                 border-radius: 10px;
                 overflow: hidden;
             }}
-            th, td {{
-                padding: 14px;
-                text-align: center;
-            }}
-            th {{
-                background: #1a1a1a;
-                color: #9a9a9a;
-            }}
-            td {{
-                border-bottom: 1px solid #1f1f1f;
-            }}
-            tr:hover {{
-                background-color: #181818;
-            }}
-            .melhor {{
-                background-color: #1b2b1b !important;
-                color: #9be79b;
-                font-weight: bold;
-            }}
-            form {{
-                text-align: center;
-                margin: 30px;
-            }}
+            th, td {{ padding: 14px; text-align: center; }}
+            th {{ background: #1a1a1a; color: #9a9a9a; }}
+            td {{ border-bottom: 1px solid #1f1f1f; }}
+            tr:hover {{ background-color: #181818; }}
+            .melhor {{ background-color: #1b2b1b !important; color: #9be79b; font-weight: bold; }}
+            form {{ text-align: center; margin: 30px; }}
             input[type=number] {{
                 padding: 12px;
                 width: 220px;
@@ -144,21 +120,9 @@ def mostrar_cotacoes():
                 color: #9be79b;
                 cursor: pointer;
             }}
-            .resultado {{
-                margin-top: 20px;
-                text-align: center;
-                font-size: 18px;
-                color: #9be79b;
-            }}
-            .resultado.calculadora {{
-                color: #ff6666;
-            }}
-            footer {{
-                text-align: center;
-                margin-top: 20px;
-                color: #777;
-                font-size: 13px;
-            }}
+            .resultado {{ margin-top: 20px; text-align: center; font-size: 18px; color: #9be79b; }}
+            .resultado.calculadora {{ color: #ff6666; }}
+            footer {{ text-align: center; margin-top: 20px; color: #777; font-size: 13px; }}
         </style>
     </head>
 
@@ -166,21 +130,12 @@ def mostrar_cotacoes():
         <h1>🤘Nosso PY🤘</h1>
 
         <form method="POST">
-            <input
-                type="number"
-                name="valor"
-                placeholder="Converter real"
-                value="{valor if valor else ''}"
-                inputmode="decimal"
-                step="any"
-                min="0"
-                required
-            >
+            <input type="number" name="valor" placeholder="Converter real" value="{valor if valor else ''}" inputmode="decimal" step="any" min="0" required>
             <input type="submit" value="Calcular">
         </form>
     """
 
-    # -------- RESULTADO CALCULADORA --------
+    # Calculadora
     texto += "<div class='resultado calculadora'>"
     if valor:
         if resultado_dolar is not None:
@@ -189,53 +144,34 @@ def mostrar_cotacoes():
             texto += f"💴 Guarani: {formatar_brl(resultado_guarani)}<br>"
     texto += "</div>"
 
-    # -------- TABELA --------
+    # Tabela
     texto += """
         <table>
             <caption>Cotações por Sucursal</caption>
-            <tr>
-                <th>Sucursal</th>
-                <th>Data</th>
-                <th>Dólar </th>
-                <th>Guarani </th>
-            </tr>
+            <tr><th>Sucursal</th><th>Data</th><th>Dólar</th><th>Guarani</th></tr>
     """
-
     for res in resultados:
         classe_dolar = "melhor" if melhor_dolar and res['sucursal'] == melhor_dolar['sucursal'] else ""
         classe_guarani = "melhor" if melhor_guarani and res['sucursal'] == melhor_guarani['sucursal'] else ""
-
-        texto += f"""
-            <tr>
-                <td>{res['sucursal']}</td>
-                <td>{res['fecha']}</td>
-                <td class="{classe_dolar}">{res['dolar_real_venta']}</td>
-                <td class="{classe_guarani}">{res['real_guarani_compra']}</td>
-            </tr>
-        """
-
+        texto += f"<tr><td>{res['sucursal']}</td><td>{res['fecha']}</td><td class='{classe_dolar}'>{res['dolar_real_venta']}</td><td class='{classe_guarani}'>{res['real_guarani_compra']}</td></tr>"
     texto += "</table>"
 
-    # -------- DASHBOARD --------
+    # Dashboard
     if melhor_dolar and melhor_guarani:
         texto += "<div class='resultado'>"
-
         aluguel = 330 * melhor_dolar['dolar_real_venta']
         texto += f"<br>🏠 Aluguel: {aluguel:.2f} R$<br>"
-
         conta_internet = 100000 / melhor_guarani['real_guarani_compra']
         texto += f"🌐 Conta de Internet: {conta_internet:.2f} R$<br>"
-
         universidade_valor = 2195000 / melhor_guarani['real_guarani_compra']
         texto += f"🎓 Universidade: {universidade_valor:.2f} R$<br>"
-
         texto += "</div>"
 
-    # -------- PRIMEIRO VÍDEO AO VIVO --------
+    # Primeiro vídeo
     texto += """
     <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
-        <h2>📹 PY ➡️ FOZ </h2>
-        <video id="video1" controls autoplay muted style="width:100%;max-width:900px;border-radius:10px;"></video>
+        <h2>📹 Paraguai ➡️ Foz do Iguaçu</h2>
+        <video id="video1" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
     </div>
     <script>
         var video1 = document.getElementById('video1');
@@ -250,11 +186,11 @@ def mostrar_cotacoes():
     </script>
     """
 
-    # -------- SEGUNDO VÍDEO AO VIVO --------
+    # Segundo vídeo
     texto += """
     <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
-        <h2>📹FOZ ➡️ PY </h2>
-        <video id="video2" controls autoplay muted style="width:100%;max-width:900px;border-radius:10px;"></video>
+        <h2>📹 Foz do Paraguai AO VIVO</h2>
+        <video id="video2" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
     </div>
     <script>
         var video2 = document.getElementById('video2');
@@ -281,5 +217,3 @@ def mostrar_cotacoes():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-
-
