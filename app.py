@@ -7,7 +7,8 @@ app = Flask(__name__)
 urls = [
     "https://www.lamoneda.com.py/api/cotizaciones.php?sucursal=casa_matriz",
     "https://www.lamoneda.com.py/api/cotizaciones.php?sucursal=sucursal_jebai",
-    "https://www.lamoneda.com.py/api/cotizaciones.php?sucursal=sucursal_centro"
+    "https://www.lamoneda.com.py/api/cotizaciones.php?sucursal=sucursal_centro",
+    "https://www.lamoneda.com.py/api/cotizaciones?sucursal=sucursal_km7"
 ]
 
 def pegar_cotizaciones(url):
@@ -254,4 +255,5 @@ def mostrar_cotacoes():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
 
