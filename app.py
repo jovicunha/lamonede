@@ -234,7 +234,7 @@ def mostrar_cotacoes():
     # -------- PRIMEIRO VÍDEO AO VIVO --------
     texto += """
     <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
-        <h2>📹 PY ➡️ Foz </h2>
+        <h2>📹 PY ➡️ FOZ </h2>
         <video id="video1" controls autoplay muted style="width:100%;max-width:900px;border-radius:10px;"></video>
     </div>
     <script>
@@ -253,7 +253,7 @@ def mostrar_cotacoes():
     # -------- SEGUNDO VÍDEO AO VIVO --------
     texto += """
     <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
-        <h2>📹Foz ➡️ PY </h2>
+        <h2>📹FOZ ➡️ PY </h2>
         <video id="video2" controls autoplay muted style="width:100%;max-width:900px;border-radius:10px;"></video>
     </div>
     <script>
@@ -281,4 +281,5 @@ def mostrar_cotacoes():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
 
