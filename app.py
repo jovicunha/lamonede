@@ -1,8 +1,6 @@
 from flask import Flask, request
 import requests
 import os
-import threading
-import time
 
 app = Flask(__name__)
 
@@ -15,9 +13,6 @@ urls = [
     "https://www.lamoneda.com.py/api/cotizaciones.php?sucursal=sucursal_centro",
     "https://www.lamoneda.com.py/api/cotizaciones?sucursal=sucursal_km7"
 ]
-
-# Valor da luz (inicial)
-valor_luz_global = "Carregando..."
 
 # -----------------------------
 # Função para pegar cotações
@@ -63,106 +58,6 @@ def formatar_brl(valor):
         return f"G$ {valor:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
     except:
         return str(valor)
-
-# -----------------------------
-# Selenium para pegar todas as faturas da luz
-# -----------------------------
-def atualizar_luz_thread():
-    global valor_luz_global
-    from selenium import webdriver
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.chrome.service import Service
-    from selenium.webdriver.chrome.options import Options
-    from selenium.webdriver.support.ui import WebDriverWait, Select
-    from selenium.webdriver.support import expected_conditions as EC
-    import time
-
-    chrome_driver_path = "C:/Users/JVCR/OneDrive/Desktop/chromedriver-win64/chromedriver.exe"
-
-    while True:
-        try:
-            chrome_options = Options()
-            chrome_options.add_argument("--headless=new")
-            chrome_options.add_argument("--disable-gpu")
-            chrome_options.add_argument("--window-size=1920,1080")
-            chrome_options.add_argument("--no-sandbox")
-            chrome_options.add_argument("--disable-dev-shm-usage")
-
-            service = Service(chrome_driver_path)
-            driver = webdriver.Chrome(service=service, options=chrome_options)
-            wait = WebDriverWait(driver, 20)
-
-            driver.get("https://www.ande.gov.py/servicios/")
-
-            mi_cuenta = wait.until(
-                EC.presence_of_element_located(
-                    (By.XPATH, "//label[@onclick=\"cambiarContainer('mi_cuenta')\"]")
-                )
-            )
-            driver.execute_script("arguments[0].click();", mi_cuenta)
-
-            select_doc = wait.until(
-                EC.presence_of_element_located((By.ID, "in-MiCuentaLogin_tipoDocumento"))
-            )
-            Select(select_doc).select_by_value("TD004")
-
-            documento = driver.find_element(By.ID, "in-MiCuentaLogin_documentoIdentificacion")
-            documento.send_keys("FV678082")
-
-            senha = driver.find_element(By.ID, "in-MiCuentaLogin_password")
-            senha.send_keys("Parada23@")
-
-            acceder = wait.until(
-                EC.element_to_be_clickable(
-                    (By.XPATH, "//button[@onclick='miCuentaComponent.login()']")
-                )
-            )
-            driver.execute_script("arguments[0].click();", acceder)
-            time.sleep(3)
-
-            consulta = wait.until(
-                EC.presence_of_element_located(
-                    (By.XPATH, "//a[@onclick=\"cambiarContainer('factura_publico')\"]")
-                )
-            )
-            driver.execute_script("arguments[0].click();", consulta)
-
-            nis = wait.until(
-                EC.presence_of_element_located((By.ID, "in-Factura_Publica_nis"))
-            )
-            nis.send_keys("1842987")
-
-            consultar = driver.find_element(By.XPATH, "//button[@onclick=\"haber('1')\"]")
-            driver.execute_script("arguments[0].click();", consultar)
-
-            time.sleep(3)
-
-            divs = driver.find_elements(By.CSS_SELECTOR, "div.card-title.h4")
-
-            luz_list = []
-            for div in divs:
-                try:
-                    span = div.find_element(By.CSS_SELECTOR, "span.label.h6.label-warning")
-                    if "Pendiente de Pago" in span.text:
-                        valor = div.text.replace(span.text, "").strip()
-                        luz_list.append(valor)
-                except:
-                    continue
-
-            driver.quit()
-
-            if luz_list:
-                valor_luz_global = "<br>".join(luz_list)
-            else:
-                valor_luz_global = "Nenhuma fatura pendente"
-
-        except:
-            valor_luz_global = "Erro ao consultar"
-
-        time.sleep(600)  # Atualiza a cada 10 minutos
-
-# Inicia thread da luz
-threading.Thread(target=atualizar_luz_thread, daemon=True).start()
 
 # -----------------------------
 # Flask - Página principal
@@ -220,7 +115,7 @@ def mostrar_cotacoes():
             tr:hover {{ background-color: #181818; }}
             .melhor {{ background-color: #1b2b1b !important; color: #9be79b; font-weight: bold; }}
             form {{ text-align: center; margin: 30px; }}
-            input[type=number] {{
+            input[type=number], input[type=text] {{
                 padding: 12px;
                 width: 220px;
                 border-radius: 6px;
@@ -283,50 +178,40 @@ def mostrar_cotacoes():
         texto += f"🎓 Universidade: {universidade_valor:.2f} R$<br>"
         texto += "</div>"
 
-    # ---- LINHA DA LUZ ABAIXO DO DASHBOARD ----
-    texto += f"""
+    # Consulta de Luz (formulário oficial)
+    texto += """
     <div class='resultado'>
-        ⚡ Luz:<br>{valor_luz_global}
+        ⚡ Luz:<br>
+        Consulte sua fatura oficialmente:
+        <form action="https://www.ande.gov.py/servicios/" method="get" target="_blank" style="margin-top:10px;">
+            <input type="text" name="nis" placeholder="Digite seu NIS" required>
+            <input type="submit" value="Consultar Luz">
+        </form>
     </div>
     """
 
-    # Primeiro vídeo
-    texto += """
-    <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
-        <h2>📹 PY ➡️ FOZ</h2>
-        <video id="video1" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
-    </div>
-    <script>
-        var video1 = document.getElementById('video1');
-        var videoSrc1 = "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8";
-        if (Hls.isSupported()) {
-            var hls1 = new Hls();
-            hls1.loadSource(videoSrc1);
-            hls1.attachMedia(video1);
-        } else if (video1.canPlayType('application/vnd.apple.mpegurl')) {
-            video1.src = videoSrc1;
-        }
-    </script>
-    """
-
-    # Segundo vídeo
-    texto += """
-    <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
-        <h2>📹 FOZ ➡️ PY </h2>
-        <video id="video2" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
-    </div>
-    <script>
-        var video2 = document.getElementById('video2');
-        var videoSrc2 = "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8";
-        if (Hls.isSupported()) {
-            var hls2 = new Hls();
-            hls2.loadSource(videoSrc2);
-            hls2.attachMedia(video2);
-        } else if (video2.canPlayType('application/vnd.apple.mpegurl')) {
-            video2.src = videoSrc2;
-        }
-    </script>
-    """
+    # Vídeos
+    for idx, (titulo, src) in enumerate([
+        ("📹 PY ➡️ FOZ", "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8"),
+        ("📹 FOZ ➡️ PY", "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8")
+    ], 1):
+        texto += f"""
+        <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
+            <h2>{titulo}</h2>
+            <video id="video{idx}" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
+        </div>
+        <script>
+            var video{idx} = document.getElementById('video{idx}');
+            var videoSrc{idx} = "{src}";
+            if (Hls.isSupported()) {{
+                var hls{idx} = new Hls();
+                hls{idx}.loadSource(videoSrc{idx});
+                hls{idx}.attachMedia(video{idx});
+            }} else if (video{idx}.canPlayType('application/vnd.apple.mpegurl')) {{
+                video{idx}.src = videoSrc{idx};
+            }}
+        </script>
+        """
 
     # Footer
     texto += """
