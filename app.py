@@ -1,9 +1,14 @@
 from flask import Flask, request
 import requests
 import os
+import threading
+import time
 
 app = Flask(__name__)
 
+# -----------------------------
+# URLs das cotações
+# -----------------------------
 urls = [
     "https://www.lamoneda.com.py/api/cotizaciones.php?sucursal=casa_matriz",
     "https://www.lamoneda.com.py/api/cotizaciones.php?sucursal=sucursal_jebai",
@@ -11,6 +16,12 @@ urls = [
     "https://www.lamoneda.com.py/api/cotizaciones?sucursal=sucursal_km7"
 ]
 
+# Valor da luz (inicial)
+valor_luz_global = "Carregando..."
+
+# -----------------------------
+# Função para pegar cotações
+# -----------------------------
 def pegar_cotizaciones(url):
     try:
         response = requests.get(url, timeout=10)
@@ -44,12 +55,118 @@ def pegar_cotizaciones(url):
             "real_guarani_compra": None
         }
 
+# -----------------------------
+# Função para formatar Guarani
+# -----------------------------
 def formatar_brl(valor):
     try:
         return f"G$ {valor:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
     except:
         return str(valor)
 
+# -----------------------------
+# Selenium para pegar todas as faturas da luz
+# -----------------------------
+def atualizar_luz_thread():
+    global valor_luz_global
+    from selenium import webdriver
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.support.ui import WebDriverWait, Select
+    from selenium.webdriver.support import expected_conditions as EC
+    import time
+
+    chrome_driver_path = "C:/Users/JVCR/OneDrive/Desktop/chromedriver-win64/chromedriver.exe"
+
+    while True:
+        try:
+            chrome_options = Options()
+            chrome_options.add_argument("--headless=new")
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--window-size=1920,1080")
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+
+            service = Service(chrome_driver_path)
+            driver = webdriver.Chrome(service=service, options=chrome_options)
+            wait = WebDriverWait(driver, 20)
+
+            driver.get("https://www.ande.gov.py/servicios/")
+
+            mi_cuenta = wait.until(
+                EC.presence_of_element_located(
+                    (By.XPATH, "//label[@onclick=\"cambiarContainer('mi_cuenta')\"]")
+                )
+            )
+            driver.execute_script("arguments[0].click();", mi_cuenta)
+
+            select_doc = wait.until(
+                EC.presence_of_element_located((By.ID, "in-MiCuentaLogin_tipoDocumento"))
+            )
+            Select(select_doc).select_by_value("TD004")
+
+            documento = driver.find_element(By.ID, "in-MiCuentaLogin_documentoIdentificacion")
+            documento.send_keys("FV678082")
+
+            senha = driver.find_element(By.ID, "in-MiCuentaLogin_password")
+            senha.send_keys("Parada23@")
+
+            acceder = wait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[@onclick='miCuentaComponent.login()']")
+                )
+            )
+            driver.execute_script("arguments[0].click();", acceder)
+            time.sleep(3)
+
+            consulta = wait.until(
+                EC.presence_of_element_located(
+                    (By.XPATH, "//a[@onclick=\"cambiarContainer('factura_publico')\"]")
+                )
+            )
+            driver.execute_script("arguments[0].click();", consulta)
+
+            nis = wait.until(
+                EC.presence_of_element_located((By.ID, "in-Factura_Publica_nis"))
+            )
+            nis.send_keys("1842987")
+
+            consultar = driver.find_element(By.XPATH, "//button[@onclick=\"haber('1')\"]")
+            driver.execute_script("arguments[0].click();", consultar)
+
+            time.sleep(3)
+
+            divs = driver.find_elements(By.CSS_SELECTOR, "div.card-title.h4")
+
+            luz_list = []
+            for div in divs:
+                try:
+                    span = div.find_element(By.CSS_SELECTOR, "span.label.h6.label-warning")
+                    if "Pendiente de Pago" in span.text:
+                        valor = div.text.replace(span.text, "").strip()
+                        luz_list.append(valor)
+                except:
+                    continue
+
+            driver.quit()
+
+            if luz_list:
+                valor_luz_global = "<br>".join(luz_list)
+            else:
+                valor_luz_global = "Nenhuma fatura pendente"
+
+        except:
+            valor_luz_global = "Erro ao consultar"
+
+        time.sleep(600)  # Atualiza a cada 10 minutos
+
+# Inicia thread da luz
+threading.Thread(target=atualizar_luz_thread, daemon=True).start()
+
+# -----------------------------
+# Flask - Página principal
+# -----------------------------
 @app.route("/", methods=["GET", "POST"])
 def mostrar_cotacoes():
 
@@ -125,7 +242,6 @@ def mostrar_cotacoes():
             footer {{ text-align: center; margin-top: 20px; color: #777; font-size: 13px; }}
         </style>
     </head>
-
     <body>
         <h1>🤘Nosso PY🤘</h1>
 
@@ -144,7 +260,7 @@ def mostrar_cotacoes():
             texto += f"💴 Guarani: {formatar_brl(resultado_guarani)}<br>"
     texto += "</div>"
 
-    # Tabela
+    # Tabela de cotações
     texto += """
         <table>
             <caption>Cotações por Sucursal</caption>
@@ -166,6 +282,13 @@ def mostrar_cotacoes():
         universidade_valor = 2195000 / melhor_guarani['real_guarani_compra']
         texto += f"🎓 Universidade: {universidade_valor:.2f} R$<br>"
         texto += "</div>"
+
+    # ---- LINHA DA LUZ ABAIXO DO DASHBOARD ----
+    texto += f"""
+    <div class='resultado'>
+        ⚡ Luz:<br>{valor_luz_global}
+    </div>
+    """
 
     # Primeiro vídeo
     texto += """
@@ -205,6 +328,7 @@ def mostrar_cotacoes():
     </script>
     """
 
+    # Footer
     texto += """
         <footer>Atualizado automaticamente • BY JOVICUNHA</footer>
     </body>
@@ -213,9 +337,9 @@ def mostrar_cotacoes():
 
     return texto
 
-
+# -----------------------------
+# RUN
+# -----------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-
-
