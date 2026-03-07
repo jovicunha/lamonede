@@ -4,9 +4,6 @@ import os
 
 app = Flask(__name__)
 
-# -----------------------------
-# URLs das cotações
-# -----------------------------
 urls = [
     "https://www.lamoneda.com.py/api/cotizaciones.php?sucursal=casa_matriz",
     "https://www.lamoneda.com.py/api/cotizaciones.php?sucursal=sucursal_jebai",
@@ -14,9 +11,6 @@ urls = [
     "https://www.lamoneda.com.py/api/cotizaciones?sucursal=sucursal_km7"
 ]
 
-# -----------------------------
-# Função para pegar cotações
-# -----------------------------
 def pegar_cotizaciones(url):
     try:
         response = requests.get(url, timeout=10)
@@ -50,18 +44,12 @@ def pegar_cotizaciones(url):
             "real_guarani_compra": None
         }
 
-# -----------------------------
-# Função para formatar Guarani
-# -----------------------------
 def formatar_brl(valor):
     try:
         return f"G$ {valor:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
     except:
         return str(valor)
 
-# -----------------------------
-# Flask - Página principal
-# -----------------------------
 @app.route("/", methods=["GET", "POST"])
 def mostrar_cotacoes():
 
@@ -115,7 +103,7 @@ def mostrar_cotacoes():
             tr:hover {{ background-color: #181818; }}
             .melhor {{ background-color: #1b2b1b !important; color: #9be79b; font-weight: bold; }}
             form {{ text-align: center; margin: 30px; }}
-            input[type=number], input[type=text] {{
+            input[type=number] {{
                 padding: 12px;
                 width: 220px;
                 border-radius: 6px;
@@ -137,6 +125,7 @@ def mostrar_cotacoes():
             footer {{ text-align: center; margin-top: 20px; color: #777; font-size: 13px; }}
         </style>
     </head>
+
     <body>
         <h1>🤘Nosso PY🤘</h1>
 
@@ -155,7 +144,7 @@ def mostrar_cotacoes():
             texto += f"💴 Guarani: {formatar_brl(resultado_guarani)}<br>"
     texto += "</div>"
 
-    # Tabela de cotações
+    # Tabela
     texto += """
         <table>
             <caption>Cotações por Sucursal</caption>
@@ -178,42 +167,44 @@ def mostrar_cotacoes():
         texto += f"🎓 Universidade: {universidade_valor:.2f} R$<br>"
         texto += "</div>"
 
-    # Consulta de Luz (formulário oficial)
+    # Primeiro vídeo
     texto += """
-    <div class='resultado'>
-        ⚡ Luz:<br>
-        Consulte sua fatura oficialmente:
-        <form action="https://www.ande.gov.py/servicios/" method="get" target="_blank" style="margin-top:10px;">
-            <input type="text" name="nis" placeholder="Digite seu NIS" required>
-            <input type="submit" value="Consultar Luz">
-        </form>
+    <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
+        <h2>📹 PY ➡️ FOZ</h2>
+        <video id="video1" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
     </div>
+    <script>
+        var video1 = document.getElementById('video1');
+        var videoSrc1 = "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8";
+        if (Hls.isSupported()) {
+            var hls1 = new Hls();
+            hls1.loadSource(videoSrc1);
+            hls1.attachMedia(video1);
+        } else if (video1.canPlayType('application/vnd.apple.mpegurl')) {
+            video1.src = videoSrc1;
+        }
+    </script>
     """
 
-    # Vídeos
-    for idx, (titulo, src) in enumerate([
-        ("📹 PY ➡️ FOZ", "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8"),
-        ("📹 FOZ ➡️ PY", "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8")
-    ], 1):
-        texto += f"""
-        <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
-            <h2>{titulo}</h2>
-            <video id="video{idx}" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
-        </div>
-        <script>
-            var video{idx} = document.getElementById('video{idx}');
-            var videoSrc{idx} = "{src}";
-            if (Hls.isSupported()) {{
-                var hls{idx} = new Hls();
-                hls{idx}.loadSource(videoSrc{idx});
-                hls{idx}.attachMedia(video{idx});
-            }} else if (video{idx}.canPlayType('application/vnd.apple.mpegurl')) {{
-                video{idx}.src = videoSrc{idx};
-            }}
-        </script>
-        """
+    # Segundo vídeo
+    texto += """
+    <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
+        <h2>📹 FOZ ➡️ PY </h2>
+        <video id="video2" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
+    </div>
+    <script>
+        var video2 = document.getElementById('video2');
+        var videoSrc2 = "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8";
+        if (Hls.isSupported()) {
+            var hls2 = new Hls();
+            hls2.loadSource(videoSrc2);
+            hls2.attachMedia(video2);
+        } else if (video2.canPlayType('application/vnd.apple.mpegurl')) {
+            video2.src = videoSrc2;
+        }
+    </script>
+    """
 
-    # Footer
     texto += """
         <footer>Atualizado automaticamente • BY JOVICUNHA</footer>
     </body>
@@ -222,9 +213,10 @@ def mostrar_cotacoes():
 
     return texto
 
-# -----------------------------
-# RUN
-# -----------------------------
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
+
+
