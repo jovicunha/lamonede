@@ -86,7 +86,7 @@ def mostrar_cotacoes():
                 margin: 0;
                 padding: 20px;
                 color: #f0f0f0;
-                background: url('https://i.imgur.com/l3Hc14w.jpeg') no-repeat center center fixed;
+                background: url('https://i.imgur.com/CmpkqDh.jpeg') no-repeat center center fixed;
                 background-size: cover;
             }}
             body::before {{
