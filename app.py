@@ -75,7 +75,7 @@ body {{
     color:#f0f0f0;
 
     /* fundo que rola por baixo dos elementos */
-    background: url('https://i.imgur.com/CmpkqDh.jpeg') center top / cover no-repeat;
+    background: url('https://i.imgur.com/eRfCFk4.jpeg') center top / cover no-repeat;
     background-attachment: scroll;
 }}
 
@@ -154,3 +154,4 @@ if(Hls.isSupported()) {{
 if __name__ == "__main__":
     port = int(os.environ.get("PORT",8080))
     app.run(host="0.0.0.0", port=port)
+
