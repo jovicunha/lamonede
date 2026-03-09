@@ -52,7 +52,6 @@ def formatar_brl(valor):
 
 @app.route("/", methods=["GET", "POST"])
 def mostrar_cotacoes():
-
     resultados = [pegar_cotizaciones(url) for url in urls]
 
     dolar_validos = [r for r in resultados if r['dolar_real_venta'] is not None]
@@ -81,56 +80,112 @@ def mostrar_cotacoes():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
         <style>
+            /* ===== FUNDO COM IMAGEM ONLINE ===== */
             body {{
                 font-family: 'Segoe UI', sans-serif;
-                background: #0b0b0b;
-                color: #cfcfcf;
-                padding: 20px;
                 margin: 0;
+                padding: 20px;
+                color: #f0f0f0;
+                background: url('https://i.imgur.com/l3Hc14w.jpeg') no-repeat center center fixed;
+                background-size: cover;
             }}
-            h1 {{ text-align: center; margin-bottom: 30px; }}
-            table {{
-                width: 90%;
-                margin: auto;
-                border-collapse: collapse;
-                background-color: #121212;
-                border-radius: 10px;
-                overflow: hidden;
+            body::before {{
+                content: "";
+                position: fixed;
+                top: 0; left: 0;
+                width: 100%; height: 100%;
+                backdrop-filter: blur(4px);
+                background: rgba(0,0,0,0.5);
+                z-index: -1;
             }}
-            th, td {{ padding: 14px; text-align: center; }}
-            th {{ background: #1a1a1a; color: #9a9a9a; }}
-            td {{ border-bottom: 1px solid #1f1f1f; }}
-            tr:hover {{ background-color: #181818; }}
-            .melhor {{ background-color: #1b2b1b !important; color: #9be79b; font-weight: bold; }}
-            form {{ text-align: center; margin: 30px; }}
-            input[type=number] {{
-                padding: 12px;
-                width: 220px;
-                border-radius: 6px;
+            h1 {{ text-align: center; margin-bottom: 30px; font-size: 2.5em; }}
+
+            /* FORMULÁRIO */
+            form {{
+                text-align: center;
+                margin: 30px auto;
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }}
+            input[type=number], input[type=submit] {{
+                padding: 12px 20px;
+                border-radius: 8px;
                 border: none;
                 font-size: 16px;
-                background: #1a1a1a;
+            }}
+            input[type=number] {{
+                background: rgba(30,30,30,0.8);
                 color: #fff;
+                width: 200px;
             }}
             input[type=submit] {{
-                padding: 12px 22px;
-                border-radius: 6px;
-                border: none;
-                background: #333;
-                color: #9be79b;
+                background: #000000;  /* botão preto */
+                color: #ffffff;
                 cursor: pointer;
+                transition: 0.3s;
             }}
-            .resultado {{ margin-top: 20px; text-align: center; font-size: 18px; color: #9be79b; }}
-            .resultado.calculadora {{ color: #ff6666; }}
-            footer {{ text-align: center; margin-top: 20px; color: #777; font-size: 13px; }}
+            input[type=submit]:hover {{
+                background: #222222;  /* leve clareamento ao passar o mouse */
+            }}
+
+            /* RESULTADO */
+            .resultado {{
+                margin-top: 20px;
+                text-align: center;
+                font-size: 1.2em;
+            }}
+            .calculadora {{ color: #ffcc66; }}
+
+            /* TABELA */
+            table {{
+                width: 90%;
+                margin: 30px auto;
+                border-collapse: collapse;
+                background: rgba(20,20,20,0.85);
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            }}
+            th, td {{
+                padding: 14px;
+                text-align: center;
+            }}
+            th {{
+                background: rgba(0,0,0,0.6);
+                color: #ddd;
+            }}
+            td {{ border-bottom: 1px solid rgba(255,255,255,0.1); }}
+            tr:hover {{ background-color: rgba(255,255,255,0.05); }}
+            .melhor {{ color: #2ecc71; font-weight: bold; }}
+
+            /* FOOTER */
+            footer {{
+                text-align: center;
+                margin-top: 40px;
+                font-size: 0.9em;
+                color: #aaa;
+            }}
+
+            /* VIDEO */
+            .video-container {{
+                width: 90%;
+                max-width: 900px;
+                margin: 40px auto;
+                text-align: center;
+            }}
+            video {{
+                width: 100%;
+                border-radius: 12px;
+            }}
         </style>
     </head>
-
     <body>
         <h1>🤘Nosso PY🤘</h1>
 
         <form method="POST">
-            <input type="number" name="valor" placeholder="Converter real" value="{valor if valor else ''}" inputmode="decimal" step="any" min="0" required>
+            <input type="number" name="valor" placeholder="Calcule seu real!" value="{valor if valor else ''}" step="any" min="0" required>
             <input type="submit" value="Calcular">
         </form>
     """
@@ -167,43 +222,27 @@ def mostrar_cotacoes():
         texto += f"🎓 Universidade: {universidade_valor:.2f} R$<br>"
         texto += "</div>"
 
-    # Primeiro vídeo
-    texto += """
-    <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
-        <h2>📹 PY ➡️ FOZ</h2>
-        <video id="video1" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
-    </div>
-    <script>
-        var video1 = document.getElementById('video1');
-        var videoSrc1 = "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8";
-        if (Hls.isSupported()) {
-            var hls1 = new Hls();
-            hls1.loadSource(videoSrc1);
-            hls1.attachMedia(video1);
-        } else if (video1.canPlayType('application/vnd.apple.mpegurl')) {
-            video1.src = videoSrc1;
-        }
-    </script>
-    """
-
-    # Segundo vídeo
-    texto += """
-    <div style="width:90%;margin:auto;margin-top:40px;text-align:center;">
-        <h2>📹 FOZ ➡️ PY </h2>
-        <video id="video2" controls autoplay muted playsinline style="width:100%;max-width:900px;border-radius:10px;"></video>
-    </div>
-    <script>
-        var video2 = document.getElementById('video2');
-        var videoSrc2 = "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8";
-        if (Hls.isSupported()) {
-            var hls2 = new Hls();
-            hls2.loadSource(videoSrc2);
-            hls2.attachMedia(video2);
-        } else if (video2.canPlayType('application/vnd.apple.mpegurl')) {
-            video2.src = videoSrc2;
-        }
-    </script>
-    """
+    # Vídeos
+    for idx, (titulo, src) in enumerate([
+        ("📹 PY ➡️ FOZ", "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8"),
+        ("📹 FOZ ➡️ PY", "https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8")
+    ], 1):
+        texto += f"""
+        <div class='video-container'>
+            <h2>{titulo}</h2>
+            <video id='video{idx}' controls autoplay muted playsinline></video>
+        </div>
+        <script>
+            var video{idx} = document.getElementById('video{idx}');
+            if (Hls.isSupported()) {{
+                var hls{idx} = new Hls();
+                hls{idx}.loadSource('{src}');
+                hls{idx}.attachMedia(video{idx});
+            }} else if (video{idx}.canPlayType('application/vnd.apple.mpegurl')) {{
+                video{idx}.src = '{src}';
+            }}
+        </script>
+        """
 
     texto += """
         <footer>Atualizado automaticamente • BY JOVICUNHA</footer>
@@ -213,10 +252,6 @@ def mostrar_cotacoes():
 
     return texto
 
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-
-
-
