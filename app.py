@@ -80,13 +80,13 @@ def mostrar_cotacoes():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
         <style>
-            /* ===== FUNDO COM IMAGEM ONLINE ===== */
+            /* ===== FUNDO RESPONSIVO QUE ROLA ===== */
             body {{
                 font-family: 'Segoe UI', sans-serif;
                 margin: 0;
                 padding: 20px;
                 color: #f0f0f0;
-                background: url('https://i.imgur.com/l3Hc14w.jpeg') no-repeat center center scroll;
+                background: url('https://i.imgur.com/l3Hc14w.jpeg') no-repeat center top;
                 background-size: cover;
             }}
             body::before {{
@@ -180,7 +180,7 @@ def mostrar_cotacoes():
                 border-radius: 12px;
             }}
 
-            /* ===== AJUSTE PARA IPHONE / CELULARES ===== */
+            /* AJUSTE PARA IPHONE / CELULARES */
             @media (max-width: 768px) {{
                 body {{
                     background-position: center top;
