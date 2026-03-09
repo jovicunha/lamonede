@@ -80,13 +80,13 @@ def mostrar_cotacoes():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
         <style>
-            /* ===== FUNDO RESPONSIVO QUE ROLA ===== */
+            /* ===== FUNDO COM IMAGEM ONLINE ===== */
             body {{
                 font-family: 'Segoe UI', sans-serif;
                 margin: 0;
                 padding: 20px;
                 color: #f0f0f0;
-                background: url('https://i.imgur.com/l3Hc14w.jpeg') no-repeat center top;
+                background: url('https://i.imgur.com/l3Hc14w.jpeg') no-repeat center center fixed;
                 background-size: cover;
             }}
             body::before {{
@@ -121,13 +121,13 @@ def mostrar_cotacoes():
                 width: 200px;
             }}
             input[type=submit] {{
-                background: #000000;
+                background: #000000;  /* botão preto */
                 color: #ffffff;
                 cursor: pointer;
                 transition: 0.3s;
             }}
             input[type=submit]:hover {{
-                background: #222222;
+                background: #222222;  /* leve clareamento ao passar o mouse */
             }}
 
             /* RESULTADO */
@@ -178,18 +178,6 @@ def mostrar_cotacoes():
             video {{
                 width: 100%;
                 border-radius: 12px;
-            }}
-
-            /* AJUSTE PARA IPHONE / CELULARES */
-            @media (max-width: 768px) {{
-                body {{
-                    background-position: center top;
-                    padding: 10px;
-                }}
-                h1 {{ font-size: 2em; }}
-                input[type=number] {{ width: 160px; }}
-                .video-container {{ width: 100%; margin: 20px auto; }}
-                table {{ width: 100%; font-size: 14px; }}
             }}
         </style>
     </head>
