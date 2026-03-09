@@ -86,7 +86,7 @@ def mostrar_cotacoes():
                 margin: 0;
                 padding: 20px;
                 color: #f0f0f0;
-                background: url('https://i.imgur.com/l3Hc14w.jpeg') no-repeat center center fixed;
+                background: url('https://i.imgur.com/l3Hc14w.jpeg') no-repeat center center scroll;
                 background-size: cover;
             }}
             body::before {{
@@ -121,13 +121,13 @@ def mostrar_cotacoes():
                 width: 200px;
             }}
             input[type=submit] {{
-                background: #000000;  /* botão preto */
+                background: #000000;
                 color: #ffffff;
                 cursor: pointer;
                 transition: 0.3s;
             }}
             input[type=submit]:hover {{
-                background: #222222;  /* leve clareamento ao passar o mouse */
+                background: #222222;
             }}
 
             /* RESULTADO */
@@ -179,13 +179,25 @@ def mostrar_cotacoes():
                 width: 100%;
                 border-radius: 12px;
             }}
+
+            /* ===== AJUSTE PARA IPHONE / CELULARES ===== */
+            @media (max-width: 768px) {{
+                body {{
+                    background-position: center top;
+                    padding: 10px;
+                }}
+                h1 {{ font-size: 2em; }}
+                input[type=number] {{ width: 160px; }}
+                .video-container {{ width: 100%; margin: 20px auto; }}
+                table {{ width: 100%; font-size: 14px; }}
+            }}
         </style>
     </head>
     <body>
         <h1>🤘Nosso PY🤘</h1>
 
         <form method="POST">
-            <input type="number" name="valor" placeholder="Calcule seu real!" value="{valor if valor else ''}" step="any" min="0" required>
+            <input type="number" name="valor" placeholder="Converter real" value="{valor if valor else ''}" step="any" min="0" required>
             <input type="submit" value="Calcular">
         </form>
     """
