@@ -123,12 +123,13 @@ input[type=submit] {{
 
 .dashboard {{
     width:90%;
-    margin:30px auto;
-    padding:20px;
+    margin:15px auto;       /* menor margem */
+    padding:8px 12px;       /* padding reduzido */
     background: rgba(20,20,20,0.85);
-    border-radius:12px;
+    border-radius:8px;
     text-align:center;
-    font-weight:bold;
+    font-weight: normal;    /* menos pesado */
+    font-size: 1em;         /* fonte menor */
     color:#fff;
 }}
 
@@ -172,10 +173,10 @@ td {{
     background-color: rgba(212, 175, 55, 0.15); /* dourado transparente */
     color: #FFD700; /* fonte amarela brilhante */
     font-weight: bold;
-    font-size: 1.5em; /* fonte maior */
-    text-align: center; /* centraliza horizontalmente */
-    vertical-align: middle; /* centraliza verticalmente na célula */
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.4); /* leve sombra */
+    font-size: 1.5em;
+    text-align: center;
+    vertical-align: middle;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
 }}
 .video-container {{
     width:90%;
@@ -209,15 +210,15 @@ footer {{
             texto += f"💴 Guarani: G$ {int(resultado_guarani):,}".replace(",", ".") + "<br>"
 
     if melhor_dolar and melhor_guarani:
-        texto += "<div class='dashboard'>"
+        # Dashboard compacto, linha única
         aluguel = 330 * melhor_dolar['dolar_real_venta']
-        texto += f"🏠 Aluguel: R$ {aluguel:.2f}<br>"
         conta_internet = 100000 / melhor_guarani['real_guarani_compra']
-        texto += f"🌐 Conta de Internet: R$ {conta_internet:.2f}<br>"
         universidade_valor = 2195000 / melhor_guarani['real_guarani_compra']
-        texto += f"🎓 Universidade: R$ {universidade_valor:.2f}<br>"
+        texto += "<div class='dashboard'>"
+        texto += f"🏠 Aluguel: R$ {aluguel:.2f} | 🌐 Internet: R$ {conta_internet:.2f} | 🎓 Universidade: R$ {universidade_valor:.2f}"
         texto += "</div>"
 
+    # Tabela de sucursais
     texto += "<table><tr><th>Sucursal</th><th>Data</th><th>Dólar</th><th>Guarani</th></tr>"
     for res in resultados:
         classe_dolar = "melhor" if melhor_dolar and res['sucursal']==melhor_dolar['sucursal'] else ""
@@ -227,6 +228,7 @@ footer {{
         texto += f"<tr><td>{res['sucursal']}</td><td>{res['fecha']}</td><td class='{classe_dolar}'>{dolar_val}</td><td class='{classe_guarani}'>{guarani_val}</td></tr>"
     texto += "</table>"
 
+    # Vídeos
     for idx,(titulo,src) in enumerate([
         ("📹 PY ➡️ FOZ","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8"),
         ("📹 FOZ ➡️ PY","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8")
