@@ -16,39 +16,56 @@ def pegar_cotizaciones(url):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
+
         sucursal = data.get("sucursal", "Desconhecida")
         fecha = data.get("fecha", "Desconhecida")
+
         dolar_real = None
         real_guarani = None
+
         for cot in data.get("cotizaciones", []):
             if cot.get("moneda1") == "DOLAR" and cot.get("moneda2") == "REAL":
                 dolar_real = float(cot.get("venta", 0))
+
             elif cot.get("moneda1") == "REAL" and cot.get("moneda2") == "GUARANI":
                 real_guarani = float(cot.get("compra", 0))
+
         return {
             "sucursal": sucursal,
             "fecha": fecha,
             "dolar_real_venta": dolar_real,
             "real_guarani_compra": real_guarani
         }
+
     except:
-        return {"sucursal":"Erro","fecha":"-","dolar_real_venta":None,"real_guarani_compra":None}
+        return {
+            "sucursal": "Erro",
+            "fecha": "-",
+            "dolar_real_venta": None,
+            "real_guarani_compra": None
+        }
 
 @app.route("/", methods=["GET","POST"])
 def mostrar_cotacoes():
+
     resultados = [pegar_cotizaciones(url) for url in urls]
+
     dolar_validos = [r for r in resultados if r['dolar_real_venta']]
     real_validos = [r for r in resultados if r['real_guarani_compra']]
+
     melhor_dolar = min(dolar_validos, key=lambda x: x['dolar_real_venta']) if dolar_validos else None
     melhor_guarani = max(real_validos, key=lambda x: x['real_guarani_compra']) if real_validos else None
 
     valor = request.form.get("valor")
-    resultado_dolar = resultado_guarani = None
+    resultado_dolar = None
+    resultado_guarani = None
+
     if valor:
         try:
             valor_num = float(valor.replace(",", "."))
             if melhor_dolar:
                 resultado_dolar = valor_num / melhor_dolar['dolar_real_venta']
+
             if melhor_guarani:
                 resultado_guarani = valor_num * melhor_guarani['real_guarani_compra']
         except:
@@ -57,203 +74,233 @@ def mostrar_cotacoes():
     texto = f"""
 <html>
 <head>
+
 <title>🤘Nosso PY🤘</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
 <style>
+
 body {{
-    margin:0;
-    padding:0;
-    font-family:'Segoe UI',sans-serif;
-    color:#f0f0f0;
-    background: url('https://i.imgur.com/eRfCFk4.jpeg') center top / cover no-repeat;
-    background-attachment: scroll;
+margin:0;
+padding:0;
+font-family:'Segoe UI',sans-serif;
+color:#f0f0f0;
+background: url('https://i.imgur.com/eRfCFk4.jpeg') center top / cover no-repeat;
 }}
 
 .content {{
-    padding:20px;
-    min-height:200vh;
+padding:10px 20px;
+min-height:150vh;
 }}
 
 h1 {{
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 3em;
-    color: #000;
-    font-weight: 700;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-    font-family: 'Segoe UI', sans-serif;
+text-align:center;
+margin-bottom:20px;
+font-size:3em;
+color:#000;
 }}
 
 form {{
-    text-align:center;
-    margin:30px auto;
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
+text-align:center;
+margin:20px auto;
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
 }}
 
 input[type=text], input[type=submit] {{
-    padding:12px 20px;
-    border-radius:8px;
-    border:none;
-    font-size:16px;
+padding:12px 20px;
+border-radius:8px;
+border:none;
+font-size:16px;
 }}
 
 input[type=text] {{
-    background:rgba(30,30,30,0.8);
-    color:#fff;
-    width:200px;
+background:rgba(30,30,30,0.8);
+color:#fff;
+width:200px;
 }}
 
 input[type=submit] {{
-    background:#000;
-    color:#fff;
-    cursor:pointer;
+background:#000;
+color:#fff;
+cursor:pointer;
 }}
 
 .resultado {{
-    margin-top:20px;
-    text-align:center;
-    font-size:1.2em;
-    color:#000; 
-    font-weight: bold;
+margin-top:15px;
+text-align:center;
+font-size:1.2em;
+color:#000;
+font-weight:bold;
 }}
 
 .dashboard {{
-    width:90%;
-    margin:15px auto;       /* menor margem */
-    padding:8px 12px;       /* padding reduzido */
-    background: rgba(20,20,20,0.85);
-    border-radius:8px;
-    text-align:center;
-    font-weight: normal;    /* menos pesado */
-    font-size: 1em;         /* fonte menor */
-    color:#fff;
-}}
-
-.video-container h2 {{
-    color:#000;
-    font-weight:bold;
-}}
-
-.video-container video {{
-    width: 100%;
-    border-radius: 12px;
-    border: 8px solid rgba(20,20,20,0.85);
-    background: transparent;
-    box-sizing: border-box;
+width:90%;
+margin:10px auto;
+padding:6px 10px;
+background: rgba(20,20,20,0.85);
+border-radius:8px;
+text-align:center;
+font-size:0.85em;
+color:#fff;
+line-height:1.5;
 }}
 
 table {{
-    width:90%;
-    margin:30px auto;
-    border-collapse:collapse;
-    background:rgba(20,20,20,0.85);
-    border-radius:12px;
-    overflow:hidden;
+width:90%;
+margin:20px auto;
+border-collapse:collapse;
+background:rgba(20,20,20,0.85);
+border-radius:12px;
+overflow:hidden;
 }}
 
 th, td {{
-    padding:14px;
-    text-align:center;
+padding:14px;
+text-align:center;
 }}
 
 th {{
-    background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.6);
 }}
 
 td {{
-    border-bottom:1px solid rgba(255,255,255,0.1);
+border-bottom:1px solid rgba(255,255,255,0.1);
 }}
 
-/* quadrado dourado transparente, fonte amarela brilhante, alinhado à tabela */
 .melhor {{
-    background-color: rgba(212, 175, 55, 0.15); /* dourado transparente */
-    color: #FFD700; /* fonte amarela brilhante */
-    font-weight: bold;
-    font-size: 1.5em;
-    text-align: center;
-    vertical-align: middle;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+background-color: rgba(212,175,55,0.15);
+color:#FFD700;
+font-weight:bold;
+font-size:1.5em;
 }}
+
 .video-container {{
-    width:90%;
-    max-width:900px;
-    margin:40px auto;
-    text-align:center;
+width:90%;
+max-width:900px;
+margin:40px auto;
+text-align:center;
+}}
+
+.video-container h2 {{
+color:#000;
+font-weight:bold;
+}}
+
+.video-container video {{
+width:100%;
+border-radius:12px;
+border:8px solid rgba(20,20,20,0.85);
+background:transparent;
+box-sizing:border-box;
 }}
 
 footer {{
-    text-align:center;
-    margin-top:40px;
-    color:#aaa;
+text-align:center;
+margin-top:40px;
+color:#aaa;
 }}
+
 </style>
 </head>
+
 <body>
+
 <div class="content">
+
 <h1>🤘Nosso PY🤘</h1>
 
 <form method="POST">
-<input type="text" name="valor" placeholder="Digite valor em real" value="{valor if valor else ''}" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" required>
+
+<input type="text" name="valor" placeholder="Digite valor em real"
+value="{valor if valor else ''}">
+
 <input type="submit" value="Converter">
+
 </form>
 
 <div class='resultado'>
 """
+
     if valor:
+
         if resultado_dolar:
             texto += f"💵 Dólares: U$ {resultado_dolar:.2f}<br>"
+
         if resultado_guarani:
             texto += f"💴 Guarani: G$ {int(resultado_guarani):,}".replace(",", ".") + "<br>"
 
     if melhor_dolar and melhor_guarani:
-        # Dashboard compacto, linha única
+
         aluguel = 330 * melhor_dolar['dolar_real_venta']
         conta_internet = 100000 / melhor_guarani['real_guarani_compra']
         universidade_valor = 2195000 / melhor_guarani['real_guarani_compra']
+
         texto += "<div class='dashboard'>"
-        texto += f"🏠 Aluguel: R$ {aluguel:.2f} | 🌐 Internet: R$ {conta_internet:.2f} | 🎓 Universidade: R$ {universidade_valor:.2f}"
+        texto += f"🏠 Aluguel: R$ {aluguel:.2f}<br>"
+        texto += f"🌐 Internet: R$ {conta_internet:.2f}<br>"
+        texto += f"🎓 Universidade: R$ {universidade_valor:.2f}"
         texto += "</div>"
 
-    # Tabela de sucursais
     texto += "<table><tr><th>Sucursal</th><th>Data</th><th>Dólar</th><th>Guarani</th></tr>"
+
     for res in resultados:
+
         classe_dolar = "melhor" if melhor_dolar and res['sucursal']==melhor_dolar['sucursal'] else ""
         classe_guarani = "melhor" if melhor_guarani and res['sucursal']==melhor_guarani['sucursal'] else ""
-        dolar_val = f"{res['dolar_real_venta']:.2f}" if res['dolar_real_venta'] is not None else "-"
-        guarani_val = int(res['real_guarani_compra']) if res['real_guarani_compra'] is not None else "-"
+
+        dolar_val = f"{res['dolar_real_venta']:.2f}" if res['dolar_real_venta'] else "-"
+        guarani_val = int(res['real_guarani_compra']) if res['real_guarani_compra'] else "-"
+
         texto += f"<tr><td>{res['sucursal']}</td><td>{res['fecha']}</td><td class='{classe_dolar}'>{dolar_val}</td><td class='{classe_guarani}'>{guarani_val}</td></tr>"
+
     texto += "</table>"
 
-    # Vídeos
     for idx,(titulo,src) in enumerate([
-        ("📹 PY ➡️ FOZ","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8"),
-        ("📹 FOZ ➡️ PY","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8")
+    ("📹 PY ➡️ FOZ","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8"),
+    ("📹 FOZ ➡️ PY","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8")
     ],1):
+
         texto += f"""
+
 <div class='video-container'>
+
 <h2>{titulo}</h2>
+
 <video id='video{idx}' controls autoplay muted playsinline></video>
+
 </div>
+
 <script>
+
 var video{idx} = document.getElementById('video{idx}');
+
 if(Hls.isSupported()) {{
-    var hls = new Hls();
-    hls.loadSource('{src}');
-    hls.attachMedia(video{idx});
-}} else if(video{idx}.canPlayType('application/vnd.apple.mpegurl')) {{
-    video{idx}.src='{src}';
+var hls = new Hls();
+hls.loadSource('{src}');
+hls.attachMedia(video{idx});
 }}
+
+else if(video{idx}.canPlayType('application/vnd.apple.mpegurl')) {{
+video{idx}.src = '{src}';
+}}
+
 </script>
+
 """
 
     texto += "<footer>Atualizado automaticamente • BY JOVICUNHA</footer></div></body></html>"
 
     return texto
 
+
 if __name__ == "__main__":
+
     port = int(os.environ.get("PORT",8080))
+
     app.run(host="0.0.0.0", port=port)
