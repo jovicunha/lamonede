@@ -34,12 +34,6 @@ def pegar_cotizaciones(url):
     except:
         return {"sucursal":"Erro","fecha":"-","dolar_real_venta":None,"real_guarani_compra":None}
 
-def formatar_brl(valor):
-    try:
-        return f"G$ {valor:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
-    except:
-        return str(valor)
-
 @app.route("/", methods=["GET","POST"])
 def mostrar_cotacoes():
     resultados = [pegar_cotizaciones(url) for url in urls]
@@ -119,7 +113,6 @@ input[type=submit] {{
     cursor:pointer;
 }}
 
-/* RESULTADOS DE CONVERSÃO PRETO E NEGRITO */
 .resultado {{
     margin-top:20px;
     text-align:center;
@@ -128,17 +121,15 @@ input[type=submit] {{
     font-weight: bold;
 }}
 
-/* TÍTULOS DOS VÍDEOS PRETO E NEGRITO */
 .video-container h2 {{
     color:#000;
     font-weight:bold;
 }}
 
-/* MOLDURA TRANSPARENTE AO REDOR DO VÍDEO */
 .video-container video {{
     width: 100%;
     border-radius: 12px;
-    border: 4px solid rgba(255,255,255,0.3); /* contorno transparente */
+    border: 8px solid rgba(20,20,20,0.85);
     background: transparent;
     box-sizing: border-box;
 }}
@@ -199,7 +190,8 @@ footer {{
         if resultado_dolar:
             texto += f"💵 Dólares: U$ {resultado_dolar:.2f}<br>"
         if resultado_guarani:
-            texto += f"💴 Guarani: {formatar_brl(resultado_guarani)}<br>"
+            # Guarani como inteiro
+            texto += f"💴 Guarani: G$ {int(resultado_guarani):,}".replace(",", ".") + "<br>"
     texto += "</div>"
 
     texto += "<table><tr><th>Sucursal</th><th>Data</th><th>Dólar</th><th>Guarani</th></tr>"
