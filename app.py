@@ -167,18 +167,16 @@ td {{
     border-bottom:1px solid rgba(255,255,255,0.1);
 }}
 
-/* destaque dos melhores valores, agora alinhado */
+/* quadrado dourado transparente, fonte amarela brilhante, alinhado à tabela */
 .melhor {{
-    background-color: #f1c40f;
-    color: #000;
+    background-color: rgba(212, 175, 55, 0.15); /* dourado transparente */
+    color: #FFD700; /* fonte amarela brilhante */
     font-weight: bold;
-    padding:5px 0;
-    border-radius:8px;
-    width:100%;
-    box-sizing:border-box;
-    text-align:center;
+    font-size: 1.5em; /* fonte maior */
+    text-align: center; /* centraliza horizontalmente */
+    vertical-align: middle; /* centraliza verticalmente na célula */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4); /* leve sombra */
 }}
-
 .video-container {{
     width:90%;
     max-width:900px;
