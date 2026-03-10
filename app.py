@@ -67,37 +67,117 @@ def mostrar_cotacoes():
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
-/* ===== FUNDO QUE ROLA NORMAL ===== */
 body {{
     margin:0;
     padding:0;
     font-family:'Segoe UI',sans-serif;
     color:#f0f0f0;
-
-    /* fundo que rola por baixo dos elementos */
     background: url('https://i.imgur.com/eRfCFk4.jpeg') center top / cover no-repeat;
     background-attachment: scroll;
 }}
 
 .content {{
     padding:20px;
-    min-height:200vh; /* garante scroll suficiente */
+    min-height:200vh;
 }}
 
-h1 {{text-align:center;margin-bottom:30px;font-size:2.3em;}}
-form {{text-align:center;margin:30px auto;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;}}
-input[type=number],input[type=submit]{{padding:12px 20px;border-radius:8px;border:none;font-size:16px;}}
-input[type=number]{{background:rgba(30,30,30,0.8);color:#fff;width:200px;}}
-input[type=submit]{{background:#000;color:#fff;cursor:pointer;}}
-.resultado {{margin-top:20px;text-align:center;font-size:1.2em;}}
-table {{width:90%;margin:30px auto;border-collapse:collapse;background:rgba(20,20,20,0.85);border-radius:12px;overflow:hidden;}}
-th,td {{padding:14px;text-align:center;}}
-th {{background:rgba(0,0,0,0.6);}}
-td {{border-bottom:1px solid rgba(255,255,255,0.1);}}
-.melhor {{color:#2ecc71;font-weight:bold;}}
-.video-container {{width:90%;max-width:900px;margin:40px auto;text-align:center;}}
-video {{width:100%;border-radius:12px;}}
-footer {{text-align:center;margin-top:40px;color:#aaa;}}
+h1 {{
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 3em;
+    color: #000;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    font-family: 'Segoe UI', sans-serif;
+}}
+
+form {{
+    text-align:center;
+    margin:30px auto;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}}
+
+input[type=text], input[type=submit] {{
+    padding:12px 20px;
+    border-radius:8px;
+    border:none;
+    font-size:16px;
+}}
+
+input[type=text] {{
+    background:rgba(30,30,30,0.8);
+    color:#fff;
+    width:200px;
+}}
+
+input[type=submit] {{
+    background:#000;
+    color:#fff;
+    cursor:pointer;
+}}
+
+/* RESULTADOS DE CONVERSÃO PRETO E NEGRITO */
+.resultado {{
+    margin-top:20px;
+    text-align:center;
+    font-size:1.2em;
+    color:#000; 
+    font-weight: bold;
+}}
+
+/* TÍTULOS DOS VÍDEOS PRETO E NEGRITO */
+.video-container h2 {{
+    color:#000;
+    font-weight:bold;
+}}
+
+table {{
+    width:90%;
+    margin:30px auto;
+    border-collapse:collapse;
+    background:rgba(20,20,20,0.85);
+    border-radius:12px;
+    overflow:hidden;
+}}
+
+th, td {{
+    padding:14px;
+    text-align:center;
+}}
+
+th {{
+    background:rgba(0,0,0,0.6);
+}}
+
+td {{
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}}
+
+.melhor {{
+    color:#2ecc71;
+    font-weight:bold;
+}}
+
+.video-container {{
+    width:90%;
+    max-width:900px;
+    margin:40px auto;
+    text-align:center;
+}}
+
+video {{
+    width:100%;
+    border-radius:12px;
+}}
+
+footer {{
+    text-align:center;
+    margin-top:40px;
+    color:#aaa;
+}}
 </style>
 </head>
 <body>
@@ -105,8 +185,8 @@ footer {{text-align:center;margin-top:40px;color:#aaa;}}
 <h1>🤘Nosso PY🤘</h1>
 
 <form method="POST">
-<input type="number" name="valor" placeholder="Converter real" value="{valor if valor else ''}" step="any" min="0" required>
-<input type="submit" value="Calcular">
+<input type="text" name="valor" placeholder="Digite o valor em reais" value="{valor if valor else ''}" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" required>
+<input type="submit" value="Converter">
 </form>
 
 <div class='resultado'>
@@ -125,7 +205,6 @@ footer {{text-align:center;margin-top:40px;color:#aaa;}}
         texto += f"<tr><td>{res['sucursal']}</td><td>{res['fecha']}</td><td class='{classe_dolar}'>{res['dolar_real_venta']}</td><td class='{classe_guarani}'>{res['real_guarani_compra']}</td></tr>"
     texto += "</table>"
 
-    # Vídeos
     for idx,(titulo,src) in enumerate([
         ("📹 PY ➡️ FOZ","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8"),
         ("📹 FOZ ➡️ PY","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8")
@@ -154,4 +233,3 @@ if(Hls.isSupported()) {{
 if __name__ == "__main__":
     port = int(os.environ.get("PORT",8080))
     app.run(host="0.0.0.0", port=port)
-
