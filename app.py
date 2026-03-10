@@ -190,7 +190,6 @@ footer {{
         if resultado_dolar:
             texto += f"💵 Dólares: U$ {resultado_dolar:.2f}<br>"
         if resultado_guarani:
-            # Guarani como inteiro
             texto += f"💴 Guarani: G$ {int(resultado_guarani):,}".replace(",", ".") + "<br>"
     texto += "</div>"
 
@@ -198,7 +197,9 @@ footer {{
     for res in resultados:
         classe_dolar = "melhor" if melhor_dolar and res['sucursal']==melhor_dolar['sucursal'] else ""
         classe_guarani = "melhor" if melhor_guarani and res['sucursal']==melhor_guarani['sucursal'] else ""
-        texto += f"<tr><td>{res['sucursal']}</td><td>{res['fecha']}</td><td class='{classe_dolar}'>{res['dolar_real_venta']}</td><td class='{classe_guarani}'>{res['real_guarani_compra']}</td></tr>"
+        dolar_val = f"{res['dolar_real_venta']:.2f}" if res['dolar_real_venta'] is not None else "-"
+        guarani_val = int(res['real_guarani_compra']) if res['real_guarani_compra'] is not None else "-"
+        texto += f"<tr><td>{res['sucursal']}</td><td>{res['fecha']}</td><td class='{classe_dolar}'>{dolar_val}</td><td class='{classe_guarani}'>{guarani_val}</td></tr>"
     texto += "</table>"
 
     for idx,(titulo,src) in enumerate([
