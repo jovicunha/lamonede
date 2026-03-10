@@ -121,6 +121,18 @@ input[type=submit] {{
     font-weight: bold;
 }}
 
+/* Dashboard transparente estilo tabela */
+.dashboard {{
+    width:90%;
+    margin:30px auto;
+    padding:20px;
+    background: rgba(20,20,20,0.85); /* mesma cor da tabela com transparência */
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    color:#fff; /* letras brancas */
+}}
+
 .video-container h2 {{
     color:#000;
     font-weight:bold;
@@ -186,13 +198,25 @@ footer {{
 
 <div class='resultado'>
 """
+    # Resultados da conversão
     if valor:
         if resultado_dolar:
             texto += f"💵 Dólares: U$ {resultado_dolar:.2f}<br>"
         if resultado_guarani:
             texto += f"💴 Guarani: G$ {int(resultado_guarani):,}".replace(",", ".") + "<br>"
-    texto += "</div>"
 
+    # Dashboard dentro de quadrado transparente
+    if melhor_dolar and melhor_guarani:
+        texto += "<div class='dashboard'>"
+        aluguel = 330 * melhor_dolar['dolar_real_venta']
+        texto += f"🏠 Aluguel: R$ {aluguel:.2f}<br>"
+        conta_internet = 100000 / melhor_guarani['real_guarani_compra']
+        texto += f"🌐 Conta de Internet: R$ {conta_internet:.2f}<br>"
+        universidade_valor = 2195000 / melhor_guarani['real_guarani_compra']
+        texto += f"🎓 Universidade: R$ {universidade_valor:.2f}<br>"
+        texto += "</div>"
+
+    # Tabela de cotação
     texto += "<table><tr><th>Sucursal</th><th>Data</th><th>Dólar</th><th>Guarani</th></tr>"
     for res in resultados:
         classe_dolar = "melhor" if melhor_dolar and res['sucursal']==melhor_dolar['sucursal'] else ""
@@ -202,6 +226,7 @@ footer {{
         texto += f"<tr><td>{res['sucursal']}</td><td>{res['fecha']}</td><td class='{classe_dolar}'>{dolar_val}</td><td class='{classe_guarani}'>{guarani_val}</td></tr>"
     texto += "</table>"
 
+    # Vídeos
     for idx,(titulo,src) in enumerate([
         ("📹 PY ➡️ FOZ","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8"),
         ("📹 FOZ ➡️ PY","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8")
