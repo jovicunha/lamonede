@@ -134,6 +134,15 @@ input[type=submit] {{
     font-weight:bold;
 }}
 
+/* MOLDURA TRANSPARENTE AO REDOR DO VÍDEO */
+.video-container video {{
+    width: 100%;
+    border-radius: 12px;
+    border: 4px solid rgba(255,255,255,0.3); /* contorno transparente */
+    background: transparent;
+    box-sizing: border-box;
+}}
+
 table {{
     width:90%;
     margin:30px auto;
@@ -168,11 +177,6 @@ td {{
     text-align:center;
 }}
 
-video {{
-    width:100%;
-    border-radius:12px;
-}}
-
 footer {{
     text-align:center;
     margin-top:40px;
@@ -185,7 +189,7 @@ footer {{
 <h1>🤘Nosso PY🤘</h1>
 
 <form method="POST">
-<input type="text" name="valor" placeholder="Digite o valor em reais" value="{valor if valor else ''}" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" required>
+<input type="text" name="valor" placeholder="Digite valor em real" value="{valor if valor else ''}" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" required>
 <input type="submit" value="Converter">
 </form>
 
