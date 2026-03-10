@@ -121,16 +121,15 @@ input[type=submit] {{
     font-weight: bold;
 }}
 
-/* Dashboard transparente estilo tabela */
 .dashboard {{
     width:90%;
     margin:30px auto;
     padding:20px;
-    background: rgba(20,20,20,0.85); /* mesma cor da tabela com transparência */
+    background: rgba(20,20,20,0.85);
     border-radius:12px;
     text-align:center;
     font-weight:bold;
-    color:#fff; /* letras brancas */
+    color:#fff;
 }}
 
 .video-container h2 {{
@@ -168,9 +167,16 @@ td {{
     border-bottom:1px solid rgba(255,255,255,0.1);
 }}
 
+/* destaque dos melhores valores, agora alinhado */
 .melhor {{
-    color:#2ecc71;
-    font-weight:bold;
+    background-color: #f1c40f;
+    color: #000;
+    font-weight: bold;
+    padding:5px 0;
+    border-radius:8px;
+    width:100%;
+    box-sizing:border-box;
+    text-align:center;
 }}
 
 .video-container {{
@@ -198,14 +204,12 @@ footer {{
 
 <div class='resultado'>
 """
-    # Resultados da conversão
     if valor:
         if resultado_dolar:
             texto += f"💵 Dólares: U$ {resultado_dolar:.2f}<br>"
         if resultado_guarani:
             texto += f"💴 Guarani: G$ {int(resultado_guarani):,}".replace(",", ".") + "<br>"
 
-    # Dashboard dentro de quadrado transparente
     if melhor_dolar and melhor_guarani:
         texto += "<div class='dashboard'>"
         aluguel = 330 * melhor_dolar['dolar_real_venta']
@@ -216,7 +220,6 @@ footer {{
         texto += f"🎓 Universidade: R$ {universidade_valor:.2f}<br>"
         texto += "</div>"
 
-    # Tabela de cotação
     texto += "<table><tr><th>Sucursal</th><th>Data</th><th>Dólar</th><th>Guarani</th></tr>"
     for res in resultados:
         classe_dolar = "melhor" if melhor_dolar and res['sucursal']==melhor_dolar['sucursal'] else ""
@@ -226,7 +229,6 @@ footer {{
         texto += f"<tr><td>{res['sucursal']}</td><td>{res['fecha']}</td><td class='{classe_dolar}'>{dolar_val}</td><td class='{classe_guarani}'>{guarani_val}</td></tr>"
     texto += "</table>"
 
-    # Vídeos
     for idx,(titulo,src) in enumerate([
         ("📹 PY ➡️ FOZ","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidobrasil.stream/chunklist_w1853171642.m3u8"),
         ("📹 FOZ ➡️ PY","https://video04.logicahost.com.br/portovelhomamore/fozpontedaamizadesentidoparaguai.stream/chunklist_w1130272214.m3u8")
