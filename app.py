@@ -26,7 +26,6 @@ def pegar_cotizaciones(url):
         for cot in data.get("cotizaciones", []):
             if cot.get("moneda1") == "DOLAR" and cot.get("moneda2") == "REAL":
                 dolar_real = float(cot.get("venta", 0))
-
             elif cot.get("moneda1") == "REAL" and cot.get("moneda2") == "GUARANI":
                 real_guarani = float(cot.get("compra", 0))
 
@@ -65,7 +64,6 @@ def mostrar_cotacoes():
             valor_num = float(valor.replace(",", "."))
             if melhor_dolar:
                 resultado_dolar = valor_num / melhor_dolar['dolar_real_venta']
-
             if melhor_guarani:
                 resultado_guarani = valor_num * melhor_guarani['real_guarani_compra']
         except:
@@ -235,7 +233,7 @@ pattern="[0-9]*[.,]?[0-9]*">
             texto += f"💵 Dólares: U$ {resultado_dolar:.2f}<br>"
 
         if resultado_guarani:
-            texto += f"💴 Guarani: G$ {int(resultado_guarani):,}".replace(",", ".") + "<br>"
+            texto += f"💴 Guarani: G$ {resultado_guarani:,.2f}".replace(",", ".") + "<br>"
 
     if melhor_dolar and melhor_guarani:
 
