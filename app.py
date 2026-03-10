@@ -218,7 +218,9 @@ color:#aaa;
 <form method="POST">
 
 <input type="text" name="valor" placeholder="Digite valor em real"
-value="{valor if valor else ''}">
+value="{valor if valor else ''}"
+inputmode="decimal"
+pattern="[0-9]*[.,]?[0-9]*">
 
 <input type="submit" value="Converter">
 
